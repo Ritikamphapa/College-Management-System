@@ -15,7 +15,7 @@ const createTeacher = async (req, res) => {
             designation,
             qualification,
             phone,
-            address
+            address,
         } = req.body;
 
         if (
@@ -28,51 +28,35 @@ const createTeacher = async (req, res) => {
             !qualification
         ) {
             return res.status(400).json({
-                message: "Please fill all required fields"
+                message: "Please fill all required fields",
             });
         }
 
-        const employeeExists = await Teacher.findOne({ employeeId });
+        const userExists = await User.findOne({ email });
 
-        if (employeeExists) {
+        if (userExists) {
             return res.status(400).json({
-                message: "Employee ID already exists"
+                message: "Email already exists",
             });
         }
 
-        let user = await User.findOne({ email });
-
-        if (!user) {
-
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            user = await User.create({
-                name,
-                email,
-                password: hashedPassword,
-                role: "teacher",
-                department
-            });
-
-        } else {
-
-            if (user.role !== "teacher") {
-                return res.status(400).json({
-                    message: "This email belongs to another user role"
-                });
-            }
-
-        }
-
-        const teacherExists = await Teacher.findOne({
-            user: user._id
-        });
+        const teacherExists = await Teacher.findOne({ employeeId });
 
         if (teacherExists) {
             return res.status(400).json({
-                message: "Teacher profile already exists"
+                message: "Employee ID already exists",
             });
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: "teacher",
+            department,
+        });
 
         const teacher = await Teacher.create({
             user: user._id,
@@ -81,24 +65,23 @@ const createTeacher = async (req, res) => {
             designation,
             qualification,
             phone,
-            address
+            address,
         });
 
         res.status(201).json({
             message: "Teacher created successfully",
-            teacher
+            teacher,
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
         });
-
     }
 };
+
 // ================= GET ALL TEACHERS =================
 
 const getAllTeachers = async (req, res) => {
@@ -110,21 +93,119 @@ const getAllTeachers = async (req, res) => {
 
         res.status(200).json({
             count: teachers.length,
-            teachers
+            teachers,
         });
 
     } catch (error) {
-
         console.error(error);
 
         res.status(500).json({
-            message: "Internal Server Error"
+            message: "Internal Server Error",
+        });
+    }
+};
+
+// ================= GET TEACHER BY ID =================
+
+const getTeacherById = async (req, res) => {
+    try {
+
+        const teacher = await Teacher.findById(req.params.id)
+            .populate("user", "-password");
+
+        if (!teacher) {
+            return res.status(404).json({
+                message: "Teacher not found",
+            });
+        }
+
+        res.status(200).json(teacher);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+};
+
+// ================= GET TEACHER PROFILE =================
+
+const getTeacherProfile = async (req, res) => {
+    try {
+
+        const teacher = await Teacher.findOne({
+            user: req.user._id,
+        }).populate("user", "-password");
+
+        if (!teacher) {
+            return res.status(404).json({
+                message: "Teacher not found",
+            });
+        }
+
+        res.status(200).json(teacher);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal Server Error",
+        });
+    }
+};
+
+// ================= UPDATE TEACHER PROFILE =================
+
+const updateTeacherProfile = async (req, res) => {
+    try {
+
+        const {
+            department,
+            designation,
+            qualification,
+            phone,
+            address,
+        } = req.body;
+
+        const teacher = await Teacher.findOne({
+            user: req.user._id,
         });
 
+        if (!teacher) {
+            return res.status(404).json({
+                message: "Teacher not found",
+            });
+        }
+
+        teacher.department = department || teacher.department;
+        teacher.designation = designation || teacher.designation;
+        teacher.qualification =
+            qualification || teacher.qualification;
+        teacher.phone = phone || teacher.phone;
+        teacher.address = address || teacher.address;
+
+        await teacher.save();
+
+        res.status(200).json({
+            message: "Teacher profile updated successfully",
+            teacher,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal Server Error",
+        });
     }
 };
 
 module.exports = {
     createTeacher,
-    getAllTeachers
+    getAllTeachers,
+    getTeacherById,
+    getTeacherProfile,
+    updateTeacherProfile,
 };
