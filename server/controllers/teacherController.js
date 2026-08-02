@@ -201,11 +201,56 @@ const updateTeacherProfile = async (req, res) => {
         });
     }
 };
+// ================= UPDATE TEACHER (ADMIN) =================
+
+const updateTeacher = async (req, res) => {
+    try {
+
+        const {
+            department,
+            designation,
+            qualification,
+            phone,
+            address
+        } = req.body;
+
+        const teacher = await Teacher.findById(req.params.id);
+
+        if (!teacher) {
+            return res.status(404).json({
+                message: "Teacher not found"
+            });
+        }
+
+        teacher.department = department || teacher.department;
+        teacher.designation = designation || teacher.designation;
+        teacher.qualification = qualification || teacher.qualification;
+        teacher.phone = phone || teacher.phone;
+        teacher.address = address || teacher.address;
+
+        await teacher.save();
+
+        res.status(200).json({
+            message: "Teacher updated successfully",
+            teacher
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+
+    }
+};
 
 module.exports = {
     createTeacher,
     getAllTeachers,
     getTeacherById,
+    updateTeacher,
     getTeacherProfile,
     updateTeacherProfile,
 };

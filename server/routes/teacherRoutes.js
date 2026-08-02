@@ -4,7 +4,10 @@ const router = express.Router();
 const {
     createTeacher,
     getAllTeachers,
-    getTeacherById
+    getTeacherById,
+    updateTeacher,
+    getTeacherProfile,
+    updateTeacherProfile
 } = require("../controllers/teacherController");
 
 const {
@@ -14,6 +17,7 @@ const {
 console.log("createTeacher:", typeof createTeacher);
 console.log("getAllTeachers:", typeof getAllTeachers);
 console.log("getTeacherById:", typeof getTeacherById);
+console.log("updateTeacher:", typeof updateTeacher);
 console.log("protect:", typeof protect);
 console.log("authorize:", typeof authorize);
 router.get("/", protect, authorize("admin"), getAllTeachers);
@@ -23,6 +27,12 @@ router.post(
     protect,
     authorize("admin"),
     createTeacher
+);
+router.put(
+    "/:id",
+    protect,
+    authorize("admin"),
+    updateTeacher
 );
 
 
