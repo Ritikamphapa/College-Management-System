@@ -15,13 +15,7 @@ const {
     protect,
     authorize
 } = require("../middleware/authMiddleware");
-console.log("createTeacher:", typeof createTeacher);
-console.log("getAllTeachers:", typeof getAllTeachers);
-console.log("getTeacherById:", typeof getTeacherById);
-console.log("updateTeacher:", typeof updateTeacher);
-console.log("protect:", typeof protect);
-console.log("authorize:", typeof authorize);
-console.log("deleteTeacher:", typeof deleteTeacher);
+
 router.get("/", protect, authorize("admin"), getAllTeachers);
 router.get("/:id", protect, authorize("admin"), getTeacherById);
 router.post(
