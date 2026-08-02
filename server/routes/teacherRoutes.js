@@ -7,7 +7,8 @@ const {
     getTeacherById,
     updateTeacher,
     getTeacherProfile,
-    updateTeacherProfile
+    updateTeacherProfile,
+    deleteTeacher
 } = require("../controllers/teacherController");
 
 const {
@@ -20,6 +21,7 @@ console.log("getTeacherById:", typeof getTeacherById);
 console.log("updateTeacher:", typeof updateTeacher);
 console.log("protect:", typeof protect);
 console.log("authorize:", typeof authorize);
+console.log("deleteTeacher:", typeof deleteTeacher);
 router.get("/", protect, authorize("admin"), getAllTeachers);
 router.get("/:id", protect, authorize("admin"), getTeacherById);
 router.post(
@@ -33,6 +35,12 @@ router.put(
     protect,
     authorize("admin"),
     updateTeacher
+);
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    deleteTeacher
 );
 
 

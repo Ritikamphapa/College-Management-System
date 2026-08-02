@@ -245,12 +245,46 @@ const updateTeacher = async (req, res) => {
 
     }
 };
+// ================= DELETE TEACHER =================
+
+const deleteTeacher = async (req, res) => {
+    try {
+
+        const teacher = await Teacher.findById(req.params.id);
+
+        if (!teacher) {
+            return res.status(404).json({
+                message: "Teacher not found"
+            });
+        }
+
+        // Delete linked user
+        await User.findByIdAndDelete(teacher.user);
+
+        // Delete teacher profile
+        await Teacher.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({
+            message: "Teacher deleted successfully"
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+
+    }
+};
 
 module.exports = {
     createTeacher,
     getAllTeachers,
     getTeacherById,
     updateTeacher,
+    deleteTeacher,
     getTeacherProfile,
     updateTeacherProfile,
 };
