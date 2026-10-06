@@ -17,7 +17,7 @@ const {
 
 // Admin Routes
 router.post("/", protect, authorize("admin"), createSubject);
-router.get("/", protect, authorize("admin"), getAllSubjects);
+router.get("/", protect, authorize("admin", "teacher"), getAllSubjects);
 router.get("/:id", protect, authorize("admin"), getSubjectById);
 router.put("/:id", protect, authorize("admin"), updateSubject);
 router.put(

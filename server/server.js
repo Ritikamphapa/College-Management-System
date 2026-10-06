@@ -17,6 +17,7 @@ const subjectRoutes = require("./routes/subjectRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const markRoutes = require("./routes/markRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const availabilityRoutes = require("./routes/availabilityRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
@@ -25,6 +26,7 @@ app.use("/api/subjects", subjectRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/marks", markRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/availability", availabilityRoutes);
 
 
 console.log("Auth routes loaded");

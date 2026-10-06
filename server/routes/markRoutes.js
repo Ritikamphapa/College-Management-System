@@ -18,7 +18,7 @@ router.post("/", protect, authorize("admin", "teacher"), addMark);
 
 router.get("/", protect, authorize("admin", "teacher"), getAllMarks);
 
-router.get("/student/:studentId", protect, authorize("admin", "teacher"), getStudentMarks);
+router.get("/student/:studentId", protect, authorize("admin", "teacher", "student"), getStudentMarks);
 
 router.put("/:id", protect, authorize("admin", "teacher"), updateMark);
 
